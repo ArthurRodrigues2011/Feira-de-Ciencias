@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Matemática em Todo Lugar | Feira de Ciências</title>
+
+<!-- FONTES -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ÍCONES -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+/* ================= RESET ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#050816;
+    color:white;
+    font-family:'Poppins', sans-serif;
+    overflow-x:hidden;
+    line-height:1.7;
+}
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+/* ================= FUNDO ANIMADO ================= */
+
+.bg-animation{
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0;
+    left:0;
+    z-index:-10;
+    overflow:hidden;
+}
+
+.cube{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border:2px solid #00f7ff44;
+    animation:float 15s linear infinite;
+}
+
+.cube:nth-child(1){
+    top:10%;
+    left:20%;
+}
+
+.cube:nth-child(2){
+    top:70%;
+    left:80%;
+    animation-delay:2s;
+}
+
+.cube:nth-child(3){
+    top:50%;
+    left:10%;
+    animation-delay:4s;
+}
+
+.cube:nth-child(4){
+    top:80%;
+    left:30%;
+    animation-delay:6s;
+}
+
+.cube:nth-child(5){
+    top:20%;
+    left:70%;
+    animation-delay:8s;
+}
+
+@keyframes float{
+
+    0%{
+        transform:scale(0) rotate(0deg);
+        opacity:1;
+    }
+
+    100%{
+        transform:scale(8) rotate(720deg);
+        opacity:0;
+    }
+
+}
+
+/* ================= NAVBAR ================= */
+
+nav{
+    width:100%;
+    position:fixed;
+    top:0;
+    z-index:1000;
+    display:flex;
+    justify-content:center;
+    gap:35px;
+    padding:20px;
+    flex-wrap:wrap;
+    backdrop-filter:blur(15px);
+    background:rgba(0,0,0,0.35);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+    position:relative;
+    font-size:0.95rem;
+}
+
+nav a:hover{
+    color:#00f7ff;
+}
+
+nav a::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#00f7ff;
+    transition:0.3s;
+}
+
+nav a:hover::after{
+    width:100%;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    padding:140px 20px 60px;
+}
+
+.hero h1{
+    font-family:'Orbitron', sans-serif;
+    font-size:5rem;
+    line-height:1.1;
+    word-break:break-word;
+    background:linear-gradient(to right,#00f7ff,#4facfe,#00f7ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:glow 3s infinite alternate;
+}
+
+.hero h2{
+    margin-top:20px;
+    font-size:1.4rem;
+    color:#b6c6ff;
+    font-weight:300;
+}
+
+.hero p{
+    max-width:900px;
+    margin-top:25px;
+    color:#d4d9ff;
+    font-size:1.1rem;
+}
+
+@keyframes glow{
+
+    from{
+        filter:drop-shadow(0 0 10px #00f7ff);
+    }
+
+    to{
+        filter:drop-shadow(0 0 30px #00f7ff);
+    }
+
+}
+
+.hero-btn{
+    margin-top:40px;
+    padding:18px 40px;
+    border:none;
+    border-radius:15px;
+    background:linear-gradient(45deg,#00f7ff,#0077ff);
+    color:white;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.4s;
+    text-decoration:none;
+    box-shadow:0 0 20px #00f7ff55;
+}
+
+.hero-btn:hover{
+    transform:scale(1.08);
+    box-shadow:0 0 40px #00f7ffaa;
+}
+
+/* ================= SEÇÕES ================= */
+
+section{
+    padding:100px 8%;
+}
+
+.section-title{
+    font-size:3rem;
+    margin-bottom:60px;
+    text-align:center;
+    font-family:'Orbitron', sans-serif;
+    color:#00f7ff;
+}
+
+/* ================= ANIMAÇÃO ================= */
+
+.fade-in{
+    opacity:0;
+    transform:translateY(40px);
+    transition:1s;
+}
+
+.fade-in.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* ================= CARDS ================= */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
+.card{
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:25px;
+    padding:35px;
+    transition:0.4s;
+    position:relative;
+    overflow:hidden;
+    backdrop-filter:blur(10px);
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.card::before{
+    content:'';
+    position:absolute;
+    width:200%;
+    height:200%;
+    background:linear-gradient(45deg,transparent,#00f7ff22,transparent);
+    top:-50%;
+    left:-50%;
+    transform:rotate(25deg);
+}
+
+.card:hover{
+    transform:translateY(-12px) scale(1.02);
+    box-shadow:0 0 30px #00f7ff33;
+}
+
+.card h3{
+    color:#00f7ff;
+    font-size:1.4rem;
+}
+
+.card p{
+    color:#d4d9ff;
+}
+
+/* ================= BARRAS ================= */
+
+.skills{
+    margin-top:50px;
+}
+
+.skill{
+    margin-bottom:30px;
+}
+
+.skill-title{
+    margin-bottom:10px;
+}
+
+.bar{
+    width:100%;
+    height:20px;
+    background:#111827;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.fill{
+    height:100%;
+    background:linear-gradient(to right,#00f7ff,#0077ff);
+    border-radius:20px;
+    animation:load 3s ease;
+}
+
+@keyframes load{
+
+    from{
+        width:0;
+    }
+
+}
+
+/* ================= TIMELINE ================= */
+
+.timeline{
+    position:relative;
+    margin-top:50px;
+}
+
+.timeline::before{
+    content:'';
+    position:absolute;
+    left:50%;
+    width:4px;
+    height:100%;
+    background:#00f7ff;
+    transform:translateX(-50%);
+}
+
+.timeline-item{
+    width:50%;
+    padding:30px;
+    position:relative;
+}
+
+.timeline-item:nth-child(odd){
+    left:0;
+    text-align:right;
+}
+
+.timeline-item:nth-child(even){
+    left:50%;
+}
+
+.timeline-content{
+    background:rgba(255,255,255,0.05);
+    padding:25px;
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.timeline-content h3{
+    color:#00f7ff;
+    margin-bottom:10px;
+}
+
+/* ================= CURIOSIDADES ================= */
+
+.fact-box{
+    margin-top:30px;
+    background:linear-gradient(135deg,#001a35,#002e5c);
+    padding:35px;
+    border-left:5px solid #00f7ff;
+    border-radius:20px;
+    font-size:1.1rem;
+}
+
+/* ================= ESTATÍSTICAS ================= */
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:30px;
+    margin-top:50px;
+}
+
+.stat{
+    text-align:center;
+    padding:40px;
+    background:rgba(255,255,255,0.05);
+    border-radius:20px;
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.stat h3{
+    font-size:3rem;
+    color:#00f7ff;
+}
+
+.stat p{
+    margin-top:10px;
+    color:#d4d9ff;
+}
+
+/* ================= FOOTER ================= */
+
+footer{
+    text-align:center;
+    padding:60px 20px;
+    background:#02040f;
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+
+footer h2{
+    color:#00f7ff;
+    margin-bottom:15px;
+    font-family:'Orbitron', sans-serif;
+}
+
+footer p{
+    color:#c9d3ff;
+}
+
+/* ================= RESPONSIVO ================= */
+
+@media(max-width:900px){
+
+    .hero h1{
+        font-size:3rem;
+    }
+
+    .timeline::before{
+        left:20px;
+    }
+
+    .timeline-item{
+        width:100%;
+        left:0 !important;
+        text-align:left !important;
+        padding-left:60px;
+        margin-bottom:40px;
+    }
+
+}
+
+@media(max-width:600px){
+
+    section{
+        padding:80px 6%;
+    }
+
+    .hero{
+        padding:120px 20px 60px;
+    }
+
+    .hero h1{
+        font-size:2.2rem;
+    }
+
+    .hero h2{
+        font-size:1rem;
+    }
+
+    .hero p{
+        font-size:0.95rem;
+    }
+
+    .section-title{
+        font-size:2rem;
+    }
+
+    .card{
+        padding:25px;
+    }
+
+    nav{
+        gap:15px;
+        padding:15px;
+    }
+
+    nav a{
+        font-size:0.85rem;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FUNDO -->
+
+<div class="bg-animation">
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+</div>
+
+<!-- NAVBAR -->
+
+<nav>
+    <a href="#sobre">Sobre</a>
+    <a href="#historia">História</a>
+    <a href="#tecnologia">Tecnologia</a>
+    <a href="#ia">IA</a>
+    <a href="#cotidiano">Cotidiano</a>
+    <a href="#curiosidades">Curiosidades</a>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero fade-in">
+
+    <h1>
+        MATEMÁTICA<br>
+        EM TODO LUGAR
+    </h1>
+
+    <h2>
+        Matemática • Tecnologia • Inteligência Artificial • Programação
+    </h2>
+
+    <p>
+        A matemática está presente em praticamente tudo ao nosso redor:
+        computadores, jogos, inteligência artificial, construções,
+        programação, economia e até no espaço.
+        Este projeto mostra como a matemática evoluiu ao longo da história
+        e como ela se tornou uma das áreas mais importantes da tecnologia moderna.
+    </p>
+
+    <a href="#sobre" class="hero-btn">
+        EXPLORAR PROJETO
+    </a>
+
+</section>
+
+<!-- SOBRE -->
+
+<section id="sobre" class="fade-in">
+
+<h2 class="section-title">
+    Sobre a Matemática
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3><i class="fa-solid fa-calculator"></i> Origem</h3>
+<p>
+A matemática surgiu da necessidade humana de contar,
+medir, construir e organizar informações.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-landmark"></i> História</h3>
+<p>
+Civilizações antigas como egípcios, gregos e babilônios
+foram fundamentais para o avanço matemático.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-globe"></i> Presença</h3>
+<p>
+Hoje a matemática está presente em praticamente toda tecnologia moderna.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- HISTÓRIA -->
+
+<section id="historia" class="fade-in">
+
+<h2 class="section-title">
+    Linha do Tempo da Matemática
+</h2>
+
+<div class="timeline">
+
+<div class="timeline-item">
+<div class="timeline-content">
+<h3>3000 a.C</h3>
+<p>
+Egípcios utilizavam matemática em construções e medições.
+</p>
+</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-content">
+<h3>500 a.C</h3>
+<p>
+Pitágoras desenvolveu estudos importantes sobre geometria.
+</p>
+</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-content">
+<h3>1600</h3>
+<p>
+Isaac Newton ajudou no desenvolvimento do cálculo.
+</p>
+</div>
+</div>
+
+<div class="timeline-item">
+<div class="timeline-content">
+<h3>1900+</h3>
+<p>
+A matemática passou a ser usada intensamente em computadores e tecnologia.
+</p>
+</div>
+</div>
+
+</div>
+
+</section>
+
+<!-- TECNOLOGIA -->
+
+<section id="tecnologia" class="fade-in">
+
+<h2 class="section-title">
+    Matemática na Tecnologia
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3><i class="fa-solid fa-gamepad"></i> Jogos</h3>
+<p>
+Movimentos, física, gráficos e animações em jogos dependem da matemática.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-computer"></i> Computadores</h3>
+<p>
+Computadores realizam bilhões de cálculos matemáticos por segundo.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-shield-halved"></i> Criptografia</h3>
+<p>
+A segurança digital utiliza fórmulas matemáticas complexas.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-rocket"></i> Espaço</h3>
+<p>
+A matemática é essencial em foguetes, satélites e missões espaciais.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- IA -->
+
+<section id="ia" class="fade-in">
+
+<h2 class="section-title">
+    Matemática na IA e Programação
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3><i class="fa-solid fa-code"></i> Álgebra</h3>
+<p>
+A álgebra é usada em variáveis, fórmulas e sistemas computacionais.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-brain"></i> Lógica Matemática</h3>
+<p>
+Os algoritmos utilizam lógica matemática para tomar decisões.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-chart-column"></i> Estatística</h3>
+<p>
+A Inteligência Artificial usa estatística e probabilidade para prever resultados.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-table-cells"></i> Matrizes</h3>
+<p>
+Matrizes são fundamentais em redes neurais e reconhecimento de imagens.
+</p>
+</div>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<h3>1956</h3>
+<p>
+Ano em que o termo Inteligência Artificial foi criado.
+</p>
+</div>
+
+<div class="stat">
+<h3>Bilhões</h3>
+<p>
+De cálculos realizados diariamente por sistemas inteligentes.
+</p>
+</div>
+
+<div class="stat">
+<h3>100%</h3>
+<p>
+Da programação depende da matemática em algum nível.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- COTIDIANO -->
+
+<section id="cotidiano" class="fade-in">
+
+<h2 class="section-title">
+    Matemática no Dia a Dia
+</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3><i class="fa-solid fa-money-bill-trend-up"></i> Economia</h3>
+<p>
+A matemática ajuda em investimentos, preços e cálculos financeiros.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-building"></i> Construções</h3>
+<p>
+Engenheiros utilizam cálculos matemáticos para construir prédios e pontes.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-mobile-screen"></i> Aplicativos</h3>
+<p>
+Apps utilizam matemática para processar informações rapidamente.
+</p>
+</div>
+
+<div class="card">
+<h3><i class="fa-solid fa-wifi"></i> Internet</h3>
+<p>
+Redes e transmissões digitais utilizam cálculos complexos constantemente.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- CURIOSIDADES -->
+
+<section id="curiosidades" class="fade-in">
+
+<h2 class="section-title">
+    Curiosidades Matemáticas
+</h2>
+
+<div class="fact-box">
+
+• O número π (pi) possui infinitas casas decimais.<br><br>
+
+• A matemática é considerada a linguagem universal da ciência.<br><br>
+
+• Computadores funcionam usando apenas os números 0 e 1.<br><br>
+
+• Jogos 3D usam cálculos matemáticos para criar movimentos e gráficos.<br><br>
+
+• Redes neurais artificiais foram inspiradas no cérebro humano.<br><br>
+
+• Criptografia protege dados bancários e informações pessoais na internet.
+
+</div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+
+<h2>
+Feira de Ciências 2026
+</h2>
+
+<p>
+Projeto: Matemática em Todo Lugar
+</p>
+
+<br>
+
+<p>
+Matemática • Inteligência Artificial • Programação • Tecnologia
+</p>
+
+<br><br>
+
+<p>
+<strong>Integrantes</strong>
+</p>
+
+<br>
+
+<p>
+Luis Daniel<br>
+Arthur Rodrigues<br>
+Conrado de Sá<br>
+Levi Marcos
+</p>
+
+<br>
+
+<p style="opacity:0.7;">
+Baltazar Lisboa
+</p>
+
+</footer>
+
+<!-- SCRIPT -->
+
+<script>
+
+const observer = new IntersectionObserver((entries)=>{
+
+    entries.forEach((entry)=>{
+
+        if(entry.isIntersecting){
+            entry.target.classList.add("show");
+        }
+
+    });
+
+});
+
+document.querySelectorAll(".fade-in").forEach((el)=>{
+    observer.observe(el);
+});
+
+</script>
+
+</body>
+</html>
