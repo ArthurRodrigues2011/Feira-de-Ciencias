@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Feira de Ciências | Matemática, IA e Programação</title>
+
+<!-- FONTES -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- ÍCONES -->
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+
+<style>
+
+/* ================= UPGRADE: RESPEITO MÁXIMO (SCROLLBAR & SELECTION) ================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #02040f;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #00f7ff, #4facfe);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #00f7ff;
+}
+
+::selection {
+    background: rgba(0, 247, 255, 0.3);
+    color: #ffffff;
+}
+
+/* ================= RESET ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#040613;
+    color:white;
+    font-family:'Poppins', sans-serif;
+    overflow-x:hidden;
+    line-height:1.7;
+}
+
+/* ================= FUNDO INTERATIVO & GRADE CIBERNÉTICA ================= */
+
+.bg-animation {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    overflow: hidden;
+    background-image: 
+        linear-gradient(rgba(0, 247, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 247, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+.bg-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0, 247, 255, 0.06) 0%, transparent 70%);
+    top: -10%;
+    right: -10%;
+    z-index: -9;
+    pointer-events: none;
+}
+
+.cube{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border:2px solid #00f7ff33;
+    animation:float 15s linear infinite;
+}
+
+.cube:nth-child(1){ top:10%; left:20%; }
+.cube:nth-child(2){ top:70%; left:80%; animation-delay:2s; }
+.cube:nth-child(3){ top:50%; left:10%; animation-delay:4s; }
+.cube:nth-child(4){ top:80%; left:30%; animation-delay:6s; }
+.cube:nth-child(5){ top:20%; left:70%; animation-delay:8s; }
+
+@keyframes float{
+    0%{ transform:scale(0) rotate(0deg); opacity:0.8; }
+    100%{ transform:scale(6) rotate(720deg); opacity:0; }
+}
+
+/* ================= NAV ================= */
+
+nav{
+    width:100%;
+    position:fixed;
+    top:0;
+    z-index:1000;
+    display:flex;
+    justify-content:center;
+    gap:30px;
+    padding:20px;
+    flex-wrap:wrap;
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    background:rgba(4, 6, 19, 0.7);
+    border-bottom:1px solid rgba(0, 247, 255, 0.15);
+}
+
+nav a{
+    color:rgba(255, 255, 255, 0.8);
+    text-decoration:none;
+    font-weight:600;
+    transition:0.3s;
+    position:relative;
+    font-size:0.9rem;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+}
+
+nav a:hover{
+    color:#00f7ff;
+    text-shadow: 0 0 10px rgba(0, 247, 255, 0.6);
+}
+
+nav a::after{
+    content:'';
+    position:absolute;
+    left:0;
+    bottom:-5px;
+    width:0%;
+    height:2px;
+    background:#00f7ff;
+    transition:0.3s;
+    box-shadow: 0 0 8px #00f7ff;
+}
+
+nav a:hover::after{
+    width:100%;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    text-align:center;
+    padding:140px 20px 60px;
+    position: relative;
+}
+
+.hero-tag {
+    font-family: 'Orbitron', sans-serif;
+    color: #00f7ff;
+    font-size: 0.85rem;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(0, 247, 255, 0.3);
+    padding: 4px 12px;
+    border-radius: 5px;
+    background: rgba(0, 247, 255, 0.05);
+}
+
+.hero h1{
+    font-family:'Orbitron', sans-serif;
+    font-size:5rem;
+    line-height:1.1;
+    background:linear-gradient(to right, #00f7ff, #4facfe, #00f7ff);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.hero h2{
+    margin-top:20px;
+    font-size:1.5rem;
+    color:#b6c6ff;
+    font-weight:400;
+    letter-spacing: 2px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.hero p{
+    max-width:750px;
+    margin-top:25px;
+    color:#a5b1e1;
+    font-size:1.1rem;
+    font-weight: 300;
+}
+
+.hero-btn{
+    margin-top:40px;
+    padding:18px 45px;
+    border:1px solid rgba(0, 247, 255, 0.4);
+    border-radius:12px;
+    background:linear-gradient(45deg, rgba(0, 247, 255, 0.2), rgba(0, 119, 255, 0.2));
+    backdrop-filter: blur(5px);
+    color:white;
+    font-size:0.95rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight:700;
+    letter-spacing: 2px;
+    cursor:pointer;
+    transition:0.4s;
+    text-decoration:none;
+    box-shadow:0 0 20px rgba(0, 247, 255, 0.15);
+}
+
+.hero-btn:hover{
+    transform:translateY(-3px);
+    background:linear-gradient(45deg,#00f7ff,#0077ff);
+    box-shadow:0 0 35px rgba(0, 247, 255, 0.5);
+    color: #000;
+}
+
+/* ================= SEÇÕES ================= */
+
+section{
+    padding:100px 10%;
+}
+
+.section-title{
+    font-size:3rem;
+    margin-bottom:60px;
+    text-align:center;
+    font-family:'Orbitron', sans-serif;
+    color:#00f7ff;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+/* ================= DECORAÇÃO DE FONTES/LINKS ================= */
+.source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    font-size: 0.8rem;
+    color: rgba(0, 247, 255, 0.6);
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+    transition: 0.3s;
+    padding-top: 15px;
+}
+
+.source-link:hover {
+    color: #ffffff;
+    text-shadow: 0 0 8px #00f7ff;
+}
+
+.inline-source {
+    font-size: 0.8rem;
+    margin-left: 6px;
+    color: #4facfe;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.inline-source:hover {
+    color: #00f7ff;
+}
+
+/* ================= ANIMAÇÕES DE ENTRADA ================= */
+
+.fade-in{
+    opacity:0;
+    transform:translateY(30px);
+    transition: cubic-bezier(0.2, 0.8, 0.2, 1) 1.2s;
+}
+
+.fade-in.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* ================= PREMIUM CARDS ================= */
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:30px;
+}
+
+.card{
+    background: rgba(10, 15, 41, 0.45);
+    border: 1px solid rgba(0, 247, 255, 0.1);
+    border-radius:20px;
+    padding:35px;
+    transition: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.card::before {
+    content: '// TECH_DATA';
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 0.65rem;
+    font-family: 'Orbitron', sans-serif;
+    color: rgba(255, 255, 255, 0.2);
+    letter-spacing: 1px;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    border-color: rgba(0, 247, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 247, 255, 0.15);
+    background: rgba(10, 15, 41, 0.7);
+}
+
+.card h3{
+    color:#00f7ff;
+    margin-bottom:15px;
+    font-size:1.3rem;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.card h3 i {
+    color: #4facfe;
+}
+
+.card p{
+    color:#b1bcde;
+    font-size: 0.95rem;
+    font-weight: 300;
+    flex-grow: 1;
+}
+
+.career-card::before {
+    content: attr(data-step);
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    font-size: 1.1rem;
+    font-family: 'Orbitron', sans-serif;
+    color: rgba(0, 247, 255, 0.2);
+    font-weight: 800;
+}
+
+/* ================= TIMELINE PREMIUM ================= */
+
+.timeline{
+    position:relative;
+    margin-top:50px;
+}
+
+.timeline::before{
+    content:'';
+    position:absolute;
+    left:50%;
+    width:2px;
+    height:100%;
+    background: linear-gradient(to bottom, #00f7ff, #0077ff, transparent);
+    transform:translateX(-50%);
+}
+
+.timeline-item{
+    width:50%;
+    padding:25px 40px;
+    position:relative;
+}
+
+.timeline-item:nth-child(odd){
+    left:0;
+    text-align:right;
+}
+
+.timeline-item:nth-child(even){
+    left:50%;
+}
+
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #00f7ff;
+    border: 3px solid #040613;
+    border-radius: 50%;
+    top: 38px;
+    z-index: 5;
+    box-shadow: 0 0 10px #00f7ff;
+}
+
+.timeline-item:nth-child(odd)::after { right: -6px; }
+.timeline-item:nth-child(even)::after { left: -6px; }
+
+.timeline-content{
+    background:rgba(10, 15, 41, 0.45);
+    padding:25px;
+    border-radius:18px;
+    border:1px solid rgba(0, 247, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: 0.3s;
+}
+
+.timeline-content:hover {
+    border-color: #00f7ff;
+    box-shadow: 0 0 20px rgba(0, 247, 255, 0.1);
+}
+
+.timeline-content h3{
+    color:#00f7ff;
+    margin-bottom:10px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+}
+
+.timeline-content p {
+    color: #b1bcde;
+    font-weight: 300;
+}
+
+/* ================= BOX DE DESTAQUE FUTURISTA ================= */
+
+.fact-box{
+    margin-top:50px;
+    background: linear-gradient(135deg, rgba(6, 17, 46, 0.7), rgba(4, 30, 63, 0.7));
+    padding:35px;
+    border: 1px solid rgba(0, 247, 255, 0.2);
+    border-left:5px solid #00f7ff;
+    border-radius:16px;
+    font-size:1.05rem;
+    color: #cbd5e1;
+    font-weight: 300;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.fact-box p {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* ================= FOOTER MATRIZ ================= */
+
+footer{
+    text-align:center;
+    padding:80px 20px;
+    background:#02040b;
+    border-top:1px solid rgba(0, 247, 255, 0.15);
+    position: relative;
+}
+
+footer h2{
+    color:#00f7ff;
+    margin-bottom:15px;
+    font-family:'Orbitron', sans-serif;
+    letter-spacing: 2px;
+}
+
+footer p{
+    color:#94a3b8;
+    font-weight: 300;
+}
+
+.integrantes-box {
+    margin-top: 30px;
+    display: inline-block;
+    padding: 20px 40px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ================= RESPONSIVO ================= */
+
+@media(max-width:900px){
+    .hero h1{ font-size:3.2rem; }
+    .section-title{ font-size: 2.4rem; }
+    .timeline::before{ left:20px; }
+    .timeline-item{
+        width:100%;
+        left:0 !important;
+        text-align:left !important;
+        padding-left:45px;
+        padding-right: 10px;
+        margin-bottom:30px;
+    }
+    .timeline-item:nth-child(odd)::after, .timeline-item:nth-child(even)::after {
+        left: 14px;
+    }
+}
+
+@media(max-width:600px){
+    .hero h1{ font-size:2.4rem; }
+    .section-title{ font-size:2rem; }
+    nav{ gap:12px; padding: 15px 5px; }
+    nav a { font-size: 0.75rem; }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- FUNDO -->
+<div class="bg-animation">
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+    <div class="cube"></div>
+</div>
+<div class="bg-glow"></div>
+
+<!-- NAV -->
+<nav>
+    <a href="#historia-ia">História da IA</a>
+    <a href="#programacao">Programação</a>
+    <a href="#matematica">Matemática</a>
+    <a href="#ia-programacao">IA & Matemática</a>
+    <a href="#carreira">Carreira</a>
+    <a href="#mercado">Mercado & Salários</a>
+    <a href="#curiosidades">Curiosidades</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero fade-in">
+    <div class="hero-tag">SISTEMA ATIVO // SCIENCE_2026</div>
+    <h1>MATEMÁTICA<br>IA & PROGRAMAÇÃO</h1>
+    <h2>Feira de Ciências 2026</h2>
+    <p>
+        Este projeto apresenta como a matemática, a programação e a inteligência artificial estão conectadas e presentes em praticamente toda tecnologia moderna utilizada atualmente.
+    </p>
+    <a href="#historia-ia" class="hero-btn">EXPLORAR CORE</a>
+</section>
+
+<!-- HISTÓRIA DA IA (EXPANDIDA) -->
+<section id="historia-ia" class="fade-in">
+    <h2 class="section-title">A Linha do Tempo Cibernética</h2>
+    <div class="timeline">
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>1843</h3>
+                <p><strong>Ada Lovelace</strong> escreve o primeiro algoritmo projetado para ser processado por uma máquina, tornando-se a primeira programadora da história.</p>
+                <a href="https://pt.wikipedia.org/wiki/Ada_Lovelace" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>1950</h3>
+                <p><strong>Alan Turing</strong> publica "Computing Machinery and Intelligence", propondo o Teste de Turing para medir a capacidade de pensar de uma máquina.</p>
+                <a href="https://pt.wikipedia.org/wiki/Teste_de_Turing" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>1956</h3>
+                <p>A expressão "Inteligência Artificial" é formalmente cunhada durante a célebre <strong>Conferência de Dartmouth</strong>, marco zero do campo acadêmico.</p>
+                <a href="https://pt.wikipedia.org/wiki/Confer%C3%AAncia_de_Dartmouth" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>1966</h3>
+                <p>Criado no MIT, <strong>ELIZA</strong> torna-se o primeiro processador de linguagem natural, um "chatbot" primitivo que simulava um psicanalista.</p>
+                <a href="https://pt.wikipedia.org/wiki/ELIZA" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>1997</h3>
+                <p>O supercomputador <strong>Deep Blue</strong> da IBM choca o mundo ao derrotar Garry Kasparov, o campeão mundial de xadrez na época.</p>
+                <a href="https://pt.wikipedia.org/wiki/Deep_Blue" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>2012</h3>
+                <p>A rede neural <strong>AlexNet</strong> vence uma grande competição de visão computacional, impulsionando a revolução moderna do <em>Deep Learning</em>.</p>
+                <a href="https://pt.wikipedia.org/wiki/Aprendizagem_profunda" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>2022</h3>
+                <p>Explosão da <strong>IA Generativa</strong>. Lançamento do ChatGPT, Midjourney e GitHub Copilot, alterando a criação de texto, imagem e código no mundo.</p>
+                <a href="https://pt.wikipedia.org/wiki/Intelig%C3%AAncia_artificial_generativa" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // ENTRADA_WIKI</a>
+            </div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>Futuro</h3>
+                <p>A busca pela <strong>AGI (Inteligência Artificial Geral)</strong> continua. Máquinas capazes de compreender, aprender e realizar qualquer tarefa intelectual humana.</p>
+                <a href="https://pt.wikipedia.org/wiki/Intelig%C3%AAncia_artificial_geral" target="_blank" class="source-link"><i class="fa-solid fa-link"></i> // GLOBAL_DATA</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROGRAMAÇÃO (EXPANDIDA) -->
+<section id="programacao" class="fade-in">
+    <h2 class="section-title">Ecossistema de Programação</h2>
+    <div class="cards">
+        <div class="card">
+            <h3><i class="fa-solid fa-code"></i> O que é?</h3>
+            <p>Programação é a criação de códigos e algoritmos complexos estruturados para fazer hardwares executarem tarefas de forma autônoma.</p>
+            <a href="https://pt.wikipedia.org/wiki/Programa%C3%A7%C3%A3o_de_computadores" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Base_Wiki</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-laptop-code"></i> Linguagens</h3>
+            <p>Python (para IA), JavaScript (para Web), C++ (para performance) e Java são as engrenagens que movem a infraestrutura digital moderna.</p>
+            <a href="https://www.tiobe.com/tiobe-index/" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> TIOBE_Index</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-gamepad"></i> Desenvolvimento de Jogos</h3>
+            <p>Motores como Unreal e Unity usam scripts pesados para calcular colisões físicas 3D, inteligência de NPCs e renderização de luz (Ray Tracing).</p>
+            <a href="https://pt.wikipedia.org/wiki/Desenvolvimento_de_jogos_eletr%C3%B4nicos" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Dev_Games</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-shield-halved"></i> Cibersegurança</h3>
+            <p>A criptografia e a programação defensiva são as únicas defesas contra malwares e ataques hackers que ameaçam redes globais todos os dias.</p>
+            <a href="https://pt.wikipedia.org/wiki/Seguran%C3%A7a_da_informa%C3%A7%C3%A3o" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Security_Data</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-network-wired"></i> Internet das Coisas (IoT)</h3>
+            <p>Seu relógio, a iluminação da sua casa, câmeras e até geladeiras agora possuem scripts rodando internamente e conectados em rede global.</p>
+            <a href="https://pt.wikipedia.org/wiki/Internet_das_coisas" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> IoT_Connect</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-mobile-screen"></i> Mobile & Cloud</h3>
+            <p>Aplicativos e serviços modernos não rodam apenas no seu celular; eles processam dados em Data Centers globais (Nuvem) em tempo real.</p>
+            <a href="https://pt.wikipedia.org/wiki/Computa%C3%A7%C3%A3o_em_nuvem" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Cloud_Computing</a>
+        </div>
+    </div>
+</section>
+
+<!-- MATEMÁTICA (EXPANDIDA) -->
+<section id="matematica" class="fade-in">
+    <h2 class="section-title">A Matemática no Mundo Real</h2>
+    <div class="cards">
+        <div class="card">
+            <h3><i class="fa-solid fa-building"></i> Engenharia Civil</h3>
+            <p>Arranha-céus e megaponte suspensas não ficam em pé por acaso. A física e o cálculo estrutural garantem que materiais resistam a ventos e terremotos.</p>
+            <a href="https://pt.wikipedia.org/wiki/Engenharia_civil" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Eng_Civil</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-money-bill-wave"></i> Modelagem Financeira</h3>
+            <p>O mercado de ações, a inflação, e até as criptomoedas dependem de modelos estatísticos complexos e probabilidade para prever o risco econômico.</p>
+            <a href="https://pt.wikipedia.org/wiki/Matem%C3%A1tica_financeira" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Math_Finances</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-satellite"></i> Exploração Espacial</h3>
+            <p>Para colocar satélites em órbita ou enviar robôs a Marte, engenheiros da NASA utilizam mecânica orbital, cálculo diferencial e trigonometria extrema.</p>
+            <a href="https://pt.wikipedia.org/wiki/Mec%C3%A2nica_celeste" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Astro_Math</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-heart-pulse"></i> Medicina Avançada</h3>
+            <p>A Tomografia e a Ressonância Magnética reconstroem imagens em 3D do corpo humano baseadas na <em>Transformada de Fourier</em>, pura matemática.</p>
+            <a href="https://pt.wikipedia.org/wiki/Transformada_de_Fourier" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Med_Math</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-cloud-sun"></i> Clima e Caos</h3>
+            <p>A previsão do tempo e os estudos climáticos rodam em supercomputadores processando equações diferenciais baseadas na Dinâmica dos Fluidos e Teoria do Caos.</p>
+            <a href="https://pt.wikipedia.org/wiki/Previs%C3%A3o_num%C3%A9rica_do_tempo" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Climate_Models</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-wifi"></i> Telecom e Criptografia</h3>
+            <p>As mensagens que enviamos via WhatsApp são embaralhadas por chaves criptográficas baseadas em números primos gigantes (Criptografia RSA).</p>
+            <a href="https://pt.wikipedia.org/wiki/Criptografia_assimetrica" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Crypto_Security</a>
+        </div>
+    </div>
+</section>
+
+<!-- IA E PROGRAMAÇÃO (EXPANDIDA) -->
+<section id="ia-programacao" class="fade-in">
+    <h2 class="section-title">O Núcleo Matemático da IA</h2>
+    <div class="cards">
+        <div class="card">
+            <h3><i class="fa-solid fa-square-root-variable"></i> Álgebra Linear</h3>
+            <p>A forma como IAs processam milhares de imagens simultaneamente ocorre transformando pixels em Matrizes e Vetores processados por placas de vídeo (GPUs).</p>
+            <a href="https://pt.wikipedia.org/wiki/%C3%81lgebra_linear" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Linear_Algebra</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-chart-line"></i> Probabilidade Bayesiana</h3>
+            <p>A Inteligência Artificial não tem "certeza" de nada. Ela utiliza a estatística inferencial para calcular qual é a resposta mais provável para uma pergunta.</p>
+            <a href="https://pt.wikipedia.org/wiki/Teorema_de_Bayes" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Teorema_Bayes</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-chart-area"></i> Cálculo Diferencial</h3>
+            <p>Modelos de IA aprendem com os próprios erros. O cálculo de derivadas (Descida do Gradiente) ajuda o sistema a otimizar funções e diminuir margens de erro.</p>
+            <a href="https://pt.wikipedia.org/wiki/Gradiente_descendente" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Gradient_Descent</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-project-diagram"></i> Matemática Discreta (Grafos)</h3>
+            <p>Redes sociais, recomendações de filmes na Netflix e rotas do Google Maps funcionam via Teoria dos Grafos, interconectando nós e arestas de dados.</p>
+            <a href="https://pt.wikipedia.org/wiki/Teoria_dos_grafos" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Teoria_Grafos</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-brain"></i> Redes Neurais (Pesos e Viés)</h3>
+            <p>Nós interconectados em camadas ocultas multiplicam "pesos matemáticos" (Weights e Biases) para simular as conexões neurais biológicas do cérebro humano.</p>
+            <a href="https://pt.wikipedia.org/wiki/Rede_neural_artificial" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Neural_Networks</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-code-branch"></i> Lógica Booleana</h3>
+            <p>Abaixo de toda complexidade, os microprocessadores operam puramente interpretando portas lógicas rigorosas de Verdadeiro (1) e Falso (0).</p>
+            <a href="https://pt.wikipedia.org/wiki/L%C3%B3gica_booleana" target="_blank" class="source-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Lógica_Booleana</a>
+        </div>
+    </div>
+    <div class="fact-box">
+        A matemática não é apenas "usada" pela Inteligência Artificial; a Inteligência Artificial <strong>é matemática pura processada em alta velocidade</strong>. Sem o trabalho centenário de matemáticos e físicos formulando algoritmos e lógicas numéricas, os computadores mais modernos hoje seriam apenas peças inúteis de silício e plástico.
+        <a href="https://www.coursera.org/articles/mathematics-for-machine-learning" target="_blank" class="source-link" style="display:flex; margin-top:15px;"><i class="fa-solid fa-graduation-cap"></i> Coursera: Math for AI // HUB</a>
+    </div>
+</section>
+
+<!-- CARREIRA -->
+<section id="carreira" class="fade-in">
+    <h2 class="section-title">Passo a Passo Profissional</h2>
+    <div class="cards">
+        <div class="card career-card" data-step="// PASSO_01">
+            <h3><i class="fa-solid fa-graduation-cap"></i> Formação Base</h3>
+            <p>Comece por cursos como Ciência da Computação, Engenharia de Software, Sistemas de Informação ou Matemática. Eles estruturam o raciocínio lógico bruto.</p>
+            <a href="https://guiadoestudante.abril.com.br/profissoes/ciencia-da-computacao/" target="_blank" class="source-link"><i class="fa-solid fa-user-gear"></i> Perfil_Carreira</a>
+        </div>
+        <div class="card career-card" data-step="// PASSO_02">
+            <h3><i class="fa-solid fa-laptop-code"></i> Aprenda a Programar</h3>
+            <p>Domine a lógica de programação e foque no ecossistema de desenvolvimento. <strong>Python</strong> é o padrão absoluto e mais exigido para criar Inteligência Artificial.</p>
+            <a href="https://www.python.org/about/" target="_blank" class="source-link"><i class="fa-solid fa-terminal"></i> Python_Core</a>
+        </div>
+        <div class="card career-card" data-step="// PASSO_03">
+            <h3><i class="fa-solid fa-calculator"></i> Reforce a Matemática</h3>
+            <p>Aprofunde-se em Álgebra Linear, Estatística, Probabilidade e Cálculo. A matemática é o mecanismo que dita as decisões lógicas por trás dos modelos.</p>
+            <a href="https://towardsdatascience.com/mathematics-for-ai-all-the-essential-math-topics-you-need-ed1d9c6b8dc1" target="_blank" class="source-link"><i class="fa-solid fa-calculator"></i> Math_AI_Documentation</a>
+        </div>
+        <div class="card career-card" data-step="// PASSO_04">
+            <h3><i class="fa-solid fa-microchip"></i> Especialização em IA</h3>
+            <p>Faça bootcamps práticos em Machine Learning, Deep Learning, Processamento de Linguagem Natural (LLMs) e manipulação estruturada de Big Data.</p>
+            <a href="https://www.alura.com.br/cursos-online-data-science/machine-learning" target="_blank" class="source-link"><i class="fa-solid fa-layer-group"></i> Especializacoes_Dev</a>
+        </div>
+        <div class="card career-card" data-step="// PASSO_05">
+            <h3><i class="fa-solid fa-folder-open"></i> Crie um Portfólio</h3>
+            <p>A teoria sem prática é nula. Crie projetos reais resolvendo problemas do cotidiano, armazene no GitHub e concorra em competições globais no Kaggle.</p>
+            <a href="https://github.com/" target="_blank" class="source-link"><i class="fa-brands fa-github"></i> Hub_GitHub</a>
+        </div>
+        <div class="card career-card" data-step="// PASSO_06">
+            <h3><i class="fa-solid fa-briefcase"></i> Mercado e Conexões</h3>
+            <p>Entre em servidores tech, vá a eventos, conquiste estágios ou vagas Junior de Data Analyst. O aprendizado no ecossistema corporativo nunca para.</p>
+            <a href="https://www.linkedin.com/" target="_blank" class="source-link"><i class="fa-brands fa-linkedin"></i> LinkedIn_Network</a>
+        </div>
+    </div>
+</section>
+
+<!-- MERCADO DE TRABALHO & FORMAÇÃO (NOVA SEÇÃO) -->
+<section id="mercado" class="fade-in">
+    <h2 class="section-title">Mercado de Trabalho & Formação</h2>
+    <div class="cards">
+        <div class="card">
+            <h3><i class="fa-solid fa-money-bill-1-wave"></i> Salário Mínimo (Base Tech)</h3>
+            <p>Embora o salário mínimo nacional dite a regra geral, o piso inicial (estágio e vagas Júnior) em carreiras de tecnologia costuma variar entre <strong>R$ 2.500 e R$ 4.000</strong> iniciais.</p>
+            <a href="https://br.indeed.com/career/desenvolvedor-junior/salaries" target="_blank" class="source-link"><i class="fa-solid fa-chart-bar"></i> // DADOS_JUNIOR</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-coins"></i> Salário Profissional (Média)</h3>
+            <p>Profissionais de nível Pleno a Sênior em Inteligência Artificial, Ciência de Dados e Desenvolvimento de Software faturam em média entre <strong>R$ 7.000 e R$ 15.000</strong> mensais no Brasil.</p>
+            <a href="https://www.glassdoor.com.br/Sal%C3%A1rios/engenheiro-de-intelig%C3%AAncia-artificial-sal%C3%A1rio-SRCH_KO0,37.htm" target="_blank" class="source-link"><i class="fa-solid fa-chart-bar"></i> // DADOS_SENIOR</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-arrow-trend-up"></i> Teto Salarial (Ganhos Globais)</h3>
+            <p>Cargos de Especialista ou Tech Lead podem superar os <strong>R$ 30.000</strong>. Além disso, muitos profissionais trabalham remotamente para o exterior ganhando em Dólar ou Euro.</p>
+            <a href="https://forbes.com.br/carreira/" target="_blank" class="source-link"><i class="fa-solid fa-globe"></i> // TECH_GLOBAL</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-building-columns"></i> Escolas e Universidades</h3>
+            <p>Para graduação de excelência, instituições como <strong>USP, Unicamp, PUC, FIAP, UFMG e ITA</strong> são referências máximas em Engenharia de Software e Matemática Aplicada.</p>
+            <a href="https://ruf.folha.uol.com.br/2023/ranking-de-cursos/computacao/" target="_blank" class="source-link"><i class="fa-solid fa-award"></i> // RANKING_MEC</a>
+        </div>
+        <div class="card">
+            <h3><i class="fa-solid fa-laptop-file"></i> Cursos Rápidos e Bootcamps</h3>
+            <p>Se o objetivo for aceleração, plataformas como <strong>Alura, Rocketseat, Coursera, Udemy e DataCamp</strong> oferecem trilhas focadas nas habilidades exatas que o mercado exige.</p>
+            <a href="https://www.coursera.org/" target="_blank" class="source-link"><i class="fa-solid fa-chalkboard-user"></i> // PLATAFORMAS_EAD</a>
+        </div>
+    </div>
+</section>
+
+<!-- CURIOSIDADES -->
+<section id="curiosidades" class="fade-in">
+    <h2 class="section-title">Curiosidades do Sistema</h2>
+    <div class="fact-box">
+        <p>• O número π possui infinitas casas decimais e sua exatidão dita a órbita de satélites modernos. <a href="https://pt.wikipedia.org/wiki/Pi" target="_blank" class="inline-source">[Ver Fonte]</a></p>
+        <p>• Computadores operam em arquitetura binária pura (ligado ou desligado / 0 e 1). <a href="https://pt.wikipedia.org/wiki/Sistema_bin%C3%A1rio_(matem%C3%A1tica)" target="_blank" class="inline-source">[Ver Fonte]</a></p>
+        <p>• Sistemas de IA rastreiam identidades faciais convertendo pixels em matrizes numéricas complexas. <a href="https://pt.wikipedia.org/wiki/Reconhecimento_facial" target="_blank" class="inline-source">[Ver Fonte]</a></p>
+        <p>• Renderizações gráficas 3D em tempo real usam pura trigonometria e cálculo vetorial. <a href="https://pt.wikipedia.org/wiki/Computa%C3%A7%C3%A3o_gr%C3%A1fica_3D" target="_blank" class="inline-source">[Ver Fonte]</a></p>
+        <p>• Redes Neurais Profundas mimetizam as sinapses biológicas humanas através de camadas matemáticas ocultas. <a href="https://pt.wikipedia.org/wiki/Rede_neural_artificial" target="_blank" class="inline-source">[Ver Fonte]</a></p>
+        <p>• Toda a infraestrutura civil e financeira global moderna roda em cima de scripts de programação. <a href="https://www.ibm.com/br-pt/topics/software-development" target="_blank" class="inline-source">[Ver Fonte]</a></p>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <h2>Feira de Ciências 2026</h2>
+    <p>Projeto de Pesquisa Avançada sobre Matemática, Inteligência Artificial e Programação</p>
+
+    <div class="integrantes-box">
+        <p style="color:#00f7ff; font-weight:600; font-family:'Orbitron', sans-serif; margin-bottom:10px; letter-spacing:1px;">INTEGRANTES DO PROJETO</p>
+        <p style="color:#ffffff;">
+            Luis Daniel &nbsp;|&nbsp; Arthur Rodrigues &nbsp;|&nbsp; Conrado de Sá &nbsp;|&nbsp; Levi Marcos
+        </p>
+        <p style="opacity:0.4; font-size:0.85rem; margin-top:15px;">
+            Orientação: Baltazar Lisboa
+        </p>
+    </div>
+</footer>
+
+<!-- SCRIPT -->
+<script>
+const observer = new IntersectionObserver((entries)=>{
+    entries.forEach((entry)=>{
+        if(entry.isIntersecting){
+            entry.target.classList.add("show");
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll(".fade-in").forEach((el)=>{
+    observer.observe(el);
+});
+</script>
+
+</body>
+</html>
