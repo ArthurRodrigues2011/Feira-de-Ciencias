@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#000000">
+
+    <title>DOOM | Arthur Rodrigues</title>
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="https://v8.js-dos.com/latest/js-dos.css">
+    <link rel="stylesheet" href="css/doom.css">
+
+    <script src="https://v8.js-dos.com/latest/js-dos.js" defer></script>
+    <script src="js/doom.js" defer></script>
+</head>
+
+<body>
+    <main class="doom-shell" aria-label="DOOM clássico">
+        <div id="dos" class="doom-screen"></div>
+
+        <p id="doomStatus" class="doom-status" aria-live="polite">Carregando DOOM...</p>
+
+        <button id="doomBack" class="doom-back" type="button" aria-label="Voltar ao site">×</button>
+
+        <div id="doomStart" class="doom-start" hidden>
+            <button id="doomStartButton" class="doom-start-button" type="button">JOGAR</button>
+        </div>
+
+        <div class="doom-touch-controls" aria-hidden="false">
+            <div id="doomMoveStick" class="doom-stick" role="application" aria-label="Movimento">
+                <div class="doom-stick-track">
+                    <div class="doom-stick-thumb"></div>
+                </div>
+            </div>
+
+            <div class="doom-actions">
+                <button class="doom-action doom-action--fire" type="button" data-key="17" aria-label="Atirar">FIRE</button>
+                <button class="doom-action" type="button" data-key="32" aria-label="Usar">USE</button>
+                <button class="doom-action" type="button" data-key="16" aria-label="Correr">RUN</button>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
