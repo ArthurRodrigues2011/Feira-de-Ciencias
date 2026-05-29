@@ -82,6 +82,62 @@ function gameLoop() {
 }
 
 // ===============================
+// POWER SYSTEM
+// ===============================
+let gameRunning = false;
+let powerOut = false;
+
+const powerSystem = {
+    totalPower: 100,
+    usageLevel: 0,
+    lastUpdate: Date.now(),
+
+    drainRates: [
+        0.1,
+        0.25,
+        0.35,
+        0.5,
+        0.75
+    ]
+};
+
+function updatePowerUsage() {
+
+    if (!gameRunning) return;
+
+    let usage = 0;
+
+    if (leftDoor) usage++;
+    if (rightDoor) usage++;
+    if (leftLight) usage++;
+    if (rightLight) usage++;
+    if (cameraIsOpen) usage++;
+
+    powerSystem.usageLevel = Math.min(usage, 4);
+}
+
+function updatePowerSystem() {
+
+    if (!gameRunning) return;
+
+    const now = Date.now();
+
+    const dt = (now - powerSystem.lastUpdate) / 1000;
+
+    powerSystem.lastUpdate = now;
+
+    const drain = powerSystem.drainRates[powerSystem.usageLevel];
+
+    powerSystem.totalPower = Math.max(
+        0,
+        powerSystem.totalPower - drain * dt
+    );
+
+    if (powerSystem.totalPower <= 0) {
+        handlePowerOut();
+    }
+}
+// ===============================
 // GAME START
 // ===============================
 
