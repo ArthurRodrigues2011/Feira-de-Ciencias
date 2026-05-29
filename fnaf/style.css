@@ -13,13 +13,11 @@ body {
 
     font-family: consolas;
 
-    touch-action: none;
-
     color: white;
 
 }
 
-/* body */
+/* BODY */
 
 body {
 
@@ -31,7 +29,7 @@ body {
 
 }
 
-/* canvas */
+/* CANVAS */
 
 canvas {
 
@@ -45,13 +43,13 @@ canvas {
 
     display: block;
 
-    object-fit: cover;
-
     border: none;
+
+    image-rendering: auto;
 
 }
 
-/* main menu */
+/* MAIN MENU */
 
 .bg-menu {
 
@@ -75,7 +73,7 @@ canvas {
 
 }
 
-/* intro */
+/* INTRO */
 
 .the-intro {
 
@@ -101,39 +99,39 @@ canvas {
 
 }
 
-/* title */
+/* TITLE */
 
 .menu-title {
 
     position: absolute;
 
-    top: 8vh;
+    top: 50px;
 
-    left: 5vw;
+    left: 50px;
 
-    width: min(90vw, 600px);
+    width: 300px;
 
 }
 
-/* menu */
+/* MENU */
 
 #menuContainer {
 
     position: absolute;
 
-    left: 5vw;
+    left: 50px;
 
-    top: 35vh;
+    top: 250px;
 
     display: flex;
 
     flex-direction: column;
 
-    width: min(90vw, 320px);
+    width: 280px;
 
 }
 
-/* input */
+/* INPUT */
 
 #usernameInput {
 
@@ -143,7 +141,7 @@ canvas {
 
     background-color: black;
 
-    font-size: 30px;
+    font-size: 24px;
 
     border: 1px solid gray;
 
@@ -155,29 +153,19 @@ canvas {
 
 #usernameInput:focus {
 
-    color: white;
-
-    font-family: consolas;
-
-    background-color: black;
-
-    font-size: 30px;
-
-    border: 1px solid gray;
-
-    border-style: none none solid none;
-
     outline: none;
 
 }
 
-/* buttons */
+/* BUTTONS */
 
-#instructionBtn {
+#instructionBtn,
+#startBtn,
+#continueBtn {
 
     margin-top: 20px;
 
-    background-color: black;
+    background-color: transparent;
 
     border: none;
 
@@ -191,43 +179,20 @@ canvas {
 
     text-align: left;
 
-    font-size: 40px;
+    font-size: 28px;
 
 }
 
-#startBtn {
+/* START / CONTINUE */
 
-    cursor: pointer;
-
-    margin-top: 50px;
-
-    text-align: left;
-
-    padding: 0;
-
-    background-color: black;
-
-    border: none;
-
-}
-
+#startBtn,
 #continueBtn {
 
-    cursor: pointer;
-
-    margin-top: 50px;
-
-    text-align: left;
-
-    padding: 0;
-
-    background-color: black;
-
-    border: none;
+    margin-top: 40px;
 
 }
 
-/* disabled */
+/* DISABLED */
 
 button:disabled {
 
@@ -235,21 +200,21 @@ button:disabled {
 
 }
 
-/* button effects */
+/* BUTTON EFFECT */
 
 button {
 
-    transition: .5s ease all;
+    transition: .3s ease all;
 
 }
 
 button:hover {
 
-    transform: scale(1.1) translateX(20px);
+    transform: translateX(10px);
 
 }
 
-/* instruction */
+/* INSTRUCTION */
 
 #instructionContainer {
 
@@ -259,13 +224,13 @@ button:hover {
 
     justify-content: center;
 
-    gap: 50px;
+    gap: 40px;
 
     border: 2px solid white;
 
     border-radius: 15px;
 
-    background-color: rgb(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
 
     padding: 20px 30px;
 
@@ -277,7 +242,7 @@ button:hover {
 
 }
 
-/* close btn */
+/* CLOSE BUTTON */
 
 #closeInstructionBtn {
 
@@ -297,7 +262,7 @@ button:hover {
 
 }
 
-/* transition */
+/* TRANSITION */
 
 .the-transition {
 
@@ -329,7 +294,7 @@ button:hover {
 
 }
 
-/* game */
+/* GAME */
 
 #gameContainer {
 
@@ -347,31 +312,27 @@ button:hover {
 
     .menu-title {
 
-        top: 5vh;
+        top: 20px;
 
-        left: 50%;
+        left: 20px;
 
-        transform: translateX(-50%);
-
-        width: 85vw;
+        width: 220px;
 
     }
 
     #menuContainer {
 
-        left: 50%;
+        left: 20px;
 
-        transform: translateX(-50%);
+        top: 180px;
 
-        top: 45vh;
-
-        width: 85vw;
+        width: 220px;
 
     }
 
     #usernameInput {
 
-        font-size: 22px;
+        font-size: 18px;
 
     }
 
@@ -379,7 +340,7 @@ button:hover {
     #startBtn,
     #continueBtn {
 
-        font-size: 28px;
+        font-size: 22px;
 
     }
 
