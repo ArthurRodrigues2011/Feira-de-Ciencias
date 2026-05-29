@@ -1,165 +1,404 @@
+html,
 body {
+
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: black;
+
     font-family: consolas;
+
+    touch-action: none;
+
+    color: white;
+
 }
 
-html {
-    color: white;
+/* body */
+
+body {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+}
+
+/* canvas */
+
+canvas {
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
+    display: block;
+
+    object-fit: cover;
+
+    border: none;
+
 }
 
 /* main menu */
 
 .bg-menu {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
     background-image: url('./Sprites/the_menu.png');
+
     background-repeat: no-repeat;
+
+    background-position: center;
+
     background-size: cover;
+
     z-index: -1;
+
 }
+
+/* intro */
 
 .the-intro {
+
     display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
     background-image: url('./Sprites/intro.png');
+
     background-repeat: no-repeat;
+
+    background-position: center;
+
     background-size: cover;
+
     z-index: -1;
+
 }
+
+/* title */
 
 .menu-title {
+
     position: absolute;
-    top: 100px;
-    left: 100px;
+
+    top: 8vh;
+
+    left: 5vw;
+
+    width: min(90vw, 600px);
+
 }
+
+/* menu */
 
 #menuContainer {
+
     position: absolute;
-    left: 100px;
-    margin-top: 250px;
+
+    left: 5vw;
+
+    top: 35vh;
+
     display: flex;
+
     flex-direction: column;
-    width: 300px;
+
+    width: min(90vw, 320px);
+
 }
 
+/* input */
+
 #usernameInput {
+
     color: white;
+
     font-family: consolas;
+
     background-color: black;
+
     font-size: 30px;
+
     border: 1px solid gray;
+
     border-style: none none solid none;
+
     padding: 0px 0px 10px 0px;
+
 }
 
 #usernameInput:focus {
+
     color: white;
+
     font-family: consolas;
+
     background-color: black;
+
     font-size: 30px;
+
     border: 1px solid gray;
+
     border-style: none none solid none;
+
     outline: none;
+
 }
 
+/* buttons */
+
 #instructionBtn {
+
     margin-top: 20px;
+
     background-color: black;
+
     border: none;
+
     padding: 0;
+
     color: white;
+
     cursor: pointer;
+
     font-family: consolas;
+
     text-align: left;
+
     font-size: 40px;
+
 }
 
 #startBtn {
+
     cursor: pointer;
+
     margin-top: 50px;
+
     text-align: left;
+
     padding: 0;
+
     background-color: black;
+
     border: none;
+
 }
 
 #continueBtn {
+
     cursor: pointer;
+
     margin-top: 50px;
+
     text-align: left;
+
     padding: 0;
+
     background-color: black;
+
     border: none;
+
 }
+
+/* disabled */
 
 button:disabled {
+
     opacity: 0.5;
+
 }
 
+/* button effects */
+
 button {
+
     transition: .5s ease all;
+
 }
 
 button:hover {
+
     transform: scale(1.1) translateX(20px);
+
 }
 
 /* instruction */
 
 #instructionContainer {
+
     display: none;
+
     align-items: start;
+
     justify-content: center;
+
     gap: 50px;
+
     border: 2px solid white;
+
     border-radius: 15px;
+
     background-color: rgb(0, 0, 0, 0.5);
+
     padding: 20px 30px;
+
+    max-width: 90vw;
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
 }
 
+/* close btn */
+
 #closeInstructionBtn {
+
     color: white;
+
     background-color: red;
+
     padding: 10px 15px;
+
     border-radius: 15px;
+
     font-weight: 700;
+
     font-size: 20px;
+
     cursor: pointer;
+
 }
 
 /* transition */
 
 .the-transition {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+
+    height: 100vh;
+
     background-color: black;
+
     z-index: 99;
+
     opacity: 0;
+
     transition: 1.5s ease-in all;
+
     visibility: hidden;
+
 }
 
 .start-transition {
+
     opacity: 1;
+
     visibility: visible;
+
 }
 
 /* game */
 
 #gameContainer {
+
     display: none;
+
+    width: 100vw;
+
+    height: 100vh;
+
 }
 
-canvas {
-    border: 1px solid white;
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .menu-title {
+
+        top: 5vh;
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        width: 85vw;
+
+    }
+
+    #menuContainer {
+
+        left: 50%;
+
+        transform: translateX(-50%);
+
+        top: 45vh;
+
+        width: 85vw;
+
+    }
+
+    #usernameInput {
+
+        font-size: 22px;
+
+    }
+
+    #instructionBtn,
+    #startBtn,
+    #continueBtn {
+
+        font-size: 28px;
+
+    }
+
+    button:hover {
+
+        transform: none;
+
+    }
+
+    #instructionContainer {
+
+        flex-direction: column;
+
+        gap: 20px;
+
+        width: 90vw;
+
+        padding: 20px;
+
+    }
+
 }
