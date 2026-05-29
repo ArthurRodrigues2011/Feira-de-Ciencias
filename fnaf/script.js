@@ -518,6 +518,69 @@ function updatePowerSystem() {
     }
 }
 // =========================
+// NIGHT SYSTEM
+// =========================
+
+let nightStartTime = null;
+
+let currentHour = 12;
+
+let hourCount = 0;
+
+let nightEnded = false;
+
+let nightNumber = 1;
+
+function startNight(night) {
+
+    nightNumber = night;
+
+    nightStartTime = Date.now();
+
+    currentHour = 12;
+
+    hourCount = 0;
+
+    nightEnded = false;
+}
+
+function updateNightProgress() {
+
+    if (
+        nightEnded ||
+        nightStartTime === null
+    ) return;
+
+    const now = Date.now();
+
+    const elapsed =
+        now - nightStartTime;
+
+    // 60 segundos = 1 hora ingame
+    const newHourCount =
+        Math.floor(elapsed / 60000);
+
+    if (
+        newHourCount !== hourCount &&
+        newHourCount <= 6
+    ) {
+
+        hourCount = newHourCount;
+
+        currentHour =
+            hourCount === 0
+                ? 12
+                : hourCount;
+    }
+
+    if (hourCount >= 6) {
+
+        nightEnded = true;
+
+        alert("6 AM");
+    }
+}
+// =========================
 // GAME START
 // =========================
 
