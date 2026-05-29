@@ -1,3 +1,7 @@
+canvas.addEventListener("click", (e) => {
+    console.log("CLICK CANVAS", e.offsetX, e.offsetY);
+});
+
 const fadeElements = document.querySelectorAll(".fade-in");
 
 if ("IntersectionObserver" in window) {
