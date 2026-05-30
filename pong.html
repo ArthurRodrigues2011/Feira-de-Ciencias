@@ -1,33 +1,82 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Pong Futurista</title>
-<link rel="stylesheet" href="css/pong.css">
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1,
+                   maximum-scale=1,
+                   user-scalable=no">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#040613">
+
+    <title>Pong Futurista</title>
+
+    <link rel="stylesheet" href="css/pong.css">
 </head>
+
 <body>
-<div id="menu" class="menu">
-    <h1>PONG 2077</h1>
-    <button id="singleBtn">1 Jogador</button>
-    <button id="multiBtn">2 Jogadores</button>
 
-    <div id="levels" class="hidden">
-        <h2>Dificuldade</h2>
-        <button class="lvl" data-level="1">Nível 1</button>
-        <button class="lvl" data-level="2">Nível 2</button>
-        <button class="lvl" data-level="3">Nível 3</button>
-        <button class="lvl" data-level="4">Nível 4</button>
-        <button class="lvl" data-level="5">Nível 5</button>
+    <div id="menu" class="menu">
+
+        <h1>PONG 2077</h1>
+
+        <button id="singleBtn">
+            1 Jogador
+        </button>
+
+        <button id="multiBtn">
+            2 Jogadores
+        </button>
+
+        <div id="levels" class="hidden">
+
+            <h2>Dificuldade</h2>
+
+            <button class="lvl" data-level="1">
+                Nível 1
+            </button>
+
+            <button class="lvl" data-level="2">
+                Nível 2
+            </button>
+
+            <button class="lvl" data-level="3">
+                Nível 3
+            </button>
+
+            <button class="lvl" data-level="4">
+                Nível 4
+            </button>
+
+            <button class="lvl" data-level="5">
+                Nível 5
+            </button>
+
+        </div>
+
     </div>
-</div>
 
-<div id="hud" class="hidden">
-    <span id="score">0 x 0</span>
-    <button id="backBtn">Menu</button>
-</div>
+    <div id="hud" class="hidden">
 
-<canvas id="game"></canvas>
-<script src="js/pong.js"></script>
+        <span id="score">
+            0 x 0
+        </span>
+
+        <button id="backBtn">
+            Menu
+        </button>
+
+    </div>
+
+    <canvas id="game"></canvas>
+
+    <script src="js/pong.js"></script>
+
 </body>
+
 </html>
