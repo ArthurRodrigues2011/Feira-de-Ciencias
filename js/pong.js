@@ -1,3 +1,11 @@
+document.addEventListener("click", () => {
+
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+    }
+
+}, { once: true });
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
