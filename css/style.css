@@ -354,7 +354,7 @@ section {
 /* ================= ANIMACOES DE ENTRADA ================= */
 
 .fade-in {
-    opacity: 0;
+    opacity: 1;
     transform: translateY(30px);
     transition: cubic-bezier(0.2, 0.8, 0.2, 1) 1.2s;
 }
