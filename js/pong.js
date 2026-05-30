@@ -19,6 +19,7 @@ let running = false;
 
 const paddleW = 12;
 const paddleH = 120;
+const MARGEM = 30;
 
 const left = {
     x: 20,
@@ -52,7 +53,23 @@ function resetBall() {
     ball.vy = Math.random() * 6 - 3;
 }
 
+function limitarRaquetes() {
+
+    if (left.y < MARGEM)
+        left.y = MARGEM;
+
+    if (left.y > canvas.height - paddleH - MARGEM)
+        left.y = canvas.height - paddleH - MARGEM;
+
+    if (right.y < MARGEM)
+        right.y = MARGEM;
+
+    if (right.y > canvas.height - paddleH - MARGEM)
+        right.y = canvas.height - paddleH - MARGEM;
+}
+
 function startGame(gameMode, difficulty = 1) {
+
     mode = gameMode;
     level = difficulty;
 
@@ -77,12 +94,16 @@ document.getElementById("singleBtn").onclick = () => {
 };
 
 document.querySelectorAll(".lvl").forEach(btn => {
+
     btn.onclick = () => {
+
         startGame(
             "bot",
             Number(btn.dataset.level)
         );
+
     };
+
 });
 
 document.getElementById("multiBtn").onclick = () => {
@@ -90,15 +111,18 @@ document.getElementById("multiBtn").onclick = () => {
 };
 
 document.getElementById("backBtn").onclick = () => {
+
     running = false;
 
     hud.classList.add("hidden");
     menu.classList.remove("hidden");
+
 };
 
 canvas.addEventListener(
     "touchmove",
     e => {
+
         e.preventDefault();
 
         for (const touch of e.touches) {
@@ -107,26 +131,40 @@ canvas.addEventListener(
 
                 if (touch.clientX < innerWidth / 2) {
 
-                    left.y =
-                        touch.clientY -
-                        paddleH / 2;
+                    left.y = Math.max(
+                        MARGEM,
+                        Math.min(
+                            touch.clientY - paddleH / 2,
+                            canvas.height - paddleH - MARGEM
+                        )
+                    );
 
                 } else {
 
-                    right.y =
-                        touch.clientY -
-                        paddleH / 2;
+                    right.y = Math.max(
+                        MARGEM,
+                        Math.min(
+                            touch.clientY - paddleH / 2,
+                            canvas.height - paddleH - MARGEM
+                        )
+                    );
 
                 }
 
             } else {
 
-                left.y =
-                    touch.clientY -
-                    paddleH / 2;
+                left.y = Math.max(
+                    MARGEM,
+                    Math.min(
+                        touch.clientY - paddleH / 2,
+                        canvas.height - paddleH - MARGEM
+                    )
+                );
 
             }
+
         }
+
     },
     { passive: false }
 );
@@ -141,13 +179,11 @@ function ai() {
     const center =
         right.y + paddleH / 2;
 
-    if (ball.y > center) {
+    if (ball.y > center)
         right.y += speed;
-    }
 
-    if (ball.y < center) {
+    if (ball.y < center)
         right.y -= speed;
-    }
 }
 
 function update() {
@@ -158,8 +194,8 @@ function update() {
     ball.y += ball.vy;
 
     if (
-        ball.y < ball.r ||
-        ball.y > canvas.height - ball.r
+        ball.y < ball.r + MARGEM ||
+        ball.y > canvas.height - ball.r - MARGEM
     ) {
         ball.vy *= -1;
     }
@@ -200,6 +236,8 @@ function update() {
     if (mode === "bot") {
         ai();
     }
+
+    limitarRaquetes();
 
     scoreEl.textContent =
         `${scoreL} x ${scoreR}`;
