@@ -15,7 +15,9 @@
     SAND: 8,
     OIL: 9,
     ICE: 10,
-    ASH: 11
+    ASH: 11,
+    SCRAP: 12,
+    MICROBOT: 13
   });
 
   function rgb(hex) {
@@ -65,6 +67,8 @@
   Materials[MaterialType.OIL] = material(9, "oil", "Oleo", "#3b3931", 0.82, 0.78, "liquid", "oil", { combustible: true, spread: 7, mobility: 0.86 });
   Materials[MaterialType.ICE] = material(10, "ice", "Gelo", "#a9daf0", 0.92, 0.91, "solid", "ice", { cold: true, defaultAux: 30 });
   Materials[MaterialType.ASH] = material(11, "ash", "Cinzas", "#6c7073", 0.55, 0.45, "powder", "ash", { spread: 2, mobility: 0.72 });
+  Materials[MaterialType.SCRAP] = material(12, "scrap", "Sucata", "#8b7f68", 2.1, 2.0, "powder", "scrap", { spread: 1, mobility: 0.46 });
+  Materials[MaterialType.MICROBOT] = material(13, "microbot", "Microbot", "#2db7a3", 0.4, 0.55, "solid", "microbot", { defaultAux: 86 });
 
   class SpatialHashGrid {
     constructor(chunkSize) {
@@ -518,6 +522,12 @@
         case MaterialType.ASH:
           this.updatePowder(x, y, type, 0.68);
           break;
+        case MaterialType.SCRAP:
+          this.updatePowder(x, y, type, 0.46);
+          break;
+        case MaterialType.MICROBOT:
+          this.updateMicrobot(x, y);
+          break;
         default:
           break;
       }
@@ -677,6 +687,154 @@
       this.tryMove(x, y, x - dir, y + 1, type);
     }
 
+    updateMicrobot(x, y) {
+      this.keepActive(x, y, 4);
+      const index = this.index(x, y);
+      let energy = this.aux[index] || Materials[MaterialType.MICROBOT].defaultAux;
+      const hot = this.hasNeighbor(x, y, [MaterialType.FIRE, MaterialType.LAVA], 1);
+      const cold = this.ambientTemperature < 24 || this.hasNeighbor(x, y, [MaterialType.ICE], 1);
+      if (hot) {
+        energy -= 18;
+      } else if (cold && ((this.tickId + x + y) & 1) === 0) {
+        energy -= 1;
+      } else if (((this.tickId + x * 3 + y * 5) & 7) === 0) {
+        energy -= 1;
+      }
+
+      if (hot && Math.random() < 0.18) {
+        this.setIndex(index, MaterialType.ASH);
+        this.effects.emit("smoke", x + 0.5, y + 0.5, 2);
+        return;
+      }
+
+      const target = this.findMicrobotResource(x, y, energy > 92 ? 4 : 3);
+      if (target >= 0) {
+        const resourceType = this.grid[target];
+        const value = this.microbotResourceValue(resourceType);
+        energy = Math.min(210, energy + value);
+        const pressure = this.particleCount / Math.max(1, this.particleLimit);
+        const maturity = Math.max(0, energy - 72) / 138;
+        const growthChance = Math.min(0.12, (0.02 + maturity * 0.08) * (1 - pressure) * this.performanceScale);
+        const growthTick = ((this.tickId + x * 7 + y * 13) & 15) === 0;
+
+        if (energy > 80 && growthTick && Math.random() < growthChance) {
+          const childEnergy = Math.max(26, Math.floor(energy * (0.33 + Math.random() * 0.12)));
+          energy = Math.max(24, energy - childEnergy - 10);
+          this.setIndex(target, MaterialType.MICROBOT, childEnergy);
+          this.moved[target] = this.tickId;
+          if (Math.random() < 0.45 * this.performanceScale) {
+            const tx = target % this.cols;
+            const ty = Math.floor(target / this.cols);
+            this.effects.emit("nano", tx + 0.5, ty + 0.5, 2);
+          }
+        } else if (Math.random() < 0.18) {
+          this.setIndex(target, resourceType === MaterialType.STONE || resourceType === MaterialType.SCRAP ? MaterialType.ASH : MaterialType.EMPTY);
+          energy = Math.max(18, energy - 10);
+        }
+      }
+
+      if (energy <= 3 || Math.random() < 0.0002) {
+        this.setIndex(index, Math.random() < 0.55 ? MaterialType.EMPTY : MaterialType.ASH);
+        return;
+      }
+
+      this.setAuxIndex(index, energy);
+      const resourceStep = target >= 0 ? this.stepTowardIndex(x, y, target) : null;
+      if (resourceStep && this.tryMoveMicrobot(x, y, x + resourceStep.dx, y + resourceStep.dy)) {
+        return;
+      }
+      const dir = ((this.tickId + x * 5 + y * 3) & 7);
+      const dx = dir === 0 || dir === 3 || dir === 5 ? -1 : dir === 2 || dir === 4 || dir === 7 ? 1 : 0;
+      const dy = dir < 3 ? -1 : dir > 4 ? 1 : 0;
+      if (this.tryMoveMicrobot(x, y, x + dx, y + dy)) {
+        return;
+      }
+      if ((this.tickId + x + y) % 3 === 0) {
+        this.tryMoveMicrobot(x, y, x + (Math.random() < 0.5 ? -1 : 1), y);
+      }
+    }
+
+    isMicrobotResource(type) {
+      return type === MaterialType.PLANT ||
+        type === MaterialType.EARTH ||
+        type === MaterialType.SAND ||
+        type === MaterialType.OIL ||
+        type === MaterialType.ASH ||
+        type === MaterialType.SCRAP ||
+        type === MaterialType.STONE;
+    }
+
+    microbotResourceValue(type) {
+      if (type === MaterialType.SCRAP) return 52;
+      if (type === MaterialType.OIL) return 36;
+      if (type === MaterialType.PLANT) return 30;
+      if (type === MaterialType.EARTH) return 22;
+      if (type === MaterialType.SAND) return 18;
+      if (type === MaterialType.STONE) return 14;
+      if (type === MaterialType.ASH) return 10;
+      return 6;
+    }
+
+    findMicrobotResource(x, y, radius) {
+      const r = radius || 2;
+      const start = (this.tickId + x * 11 + y * 7) % 16;
+      let best = -1;
+      let bestScore = -1;
+      for (let yy = y - r; yy <= y + r; yy += 1) {
+        for (let xx = x - r; xx <= x + r; xx += 1) {
+          if ((xx === x && yy === y) || !this.inBounds(xx, yy)) {
+            continue;
+          }
+          const dx = xx - x;
+          const dy = yy - y;
+          const dist = Math.abs(dx) + Math.abs(dy);
+          if (dist > r + 1) {
+            continue;
+          }
+          const index = this.index(xx, yy);
+          const type = this.grid[index];
+          if (!this.isMicrobotResource(type)) {
+            continue;
+          }
+          const score = this.microbotResourceValue(type) * 8 - dist * 9 + ((index + start) & 15);
+          if (score > bestScore) {
+            bestScore = score;
+            best = index;
+          }
+        }
+      }
+      return best;
+    }
+
+    stepTowardIndex(x, y, index) {
+      const tx = index % this.cols;
+      const ty = Math.floor(index / this.cols);
+      return {
+        dx: tx === x ? 0 : tx > x ? 1 : -1,
+        dy: ty === y ? 0 : ty > y ? 1 : -1
+      };
+    }
+
+    tryMoveMicrobot(x, y, nx, ny) {
+      if (!this.inBounds(nx, ny)) {
+        return false;
+      }
+      const from = this.index(x, y);
+      const to = this.index(nx, ny);
+      if (this.moved[to] === this.tickId) {
+        return false;
+      }
+      const target = this.grid[to];
+      if (target === MaterialType.EMPTY ||
+          target === MaterialType.WATER ||
+          target === MaterialType.VAPOR ||
+          target === MaterialType.OIL) {
+        this.swapIndexes(from, to);
+        return true;
+      }
+      return false;
+    }
+
     moveLiquid(x, y, type, spread, mobility) {
       if (Math.random() > mobility) {
         return;
@@ -739,6 +897,215 @@
           }
         }
       }
+    }
+
+    sprayMaterial(cx, cy, radius, type) {
+      const r = Math.max(1, radius | 0);
+      const amount = Math.max(8, r * r * 2);
+      for (let i = 0; i < amount; i += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.sqrt(Math.random()) * r * 1.35;
+        const x = Math.round(cx + Math.cos(angle) * dist);
+        const y = Math.round(cy + Math.sin(angle) * dist);
+        if (type === MaterialType.EMPTY || this.getCell(x, y) === MaterialType.EMPTY || Materials[type].gas || type === MaterialType.FIRE) {
+          this.setCell(x, y, type);
+        }
+      }
+    }
+
+    showerMaterial(cx, cy, radius, type) {
+      const r = Math.max(1, radius | 0);
+      const amount = Math.max(5, r * 3);
+      for (let i = 0; i < amount; i += 1) {
+        const x = Math.max(0, Math.min(this.cols - 1, cx + ((Math.random() * r * 2) | 0) - r));
+        const y = Math.max(0, Math.min(this.rows - 1, cy - r * 3 - ((Math.random() * r * 3) | 0)));
+        this.setCell(x, y, type);
+      }
+    }
+
+    spawnMicrobots(cx, cy, radius) {
+      const r = Math.max(1, radius | 0);
+      const amount = Math.max(4, Math.floor(r * r * 0.8));
+      for (let i = 0; i < amount; i += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = Math.sqrt(Math.random()) * r;
+        const x = Math.round(cx + Math.cos(angle) * dist);
+        const y = Math.round(cy + Math.sin(angle) * dist);
+        if (!this.inBounds(x, y)) {
+          continue;
+        }
+        const index = this.index(x, y);
+        const type = this.grid[index];
+        if (type === MaterialType.EMPTY || this.isMicrobotResource(type) || type === MaterialType.WATER || type === MaterialType.OIL) {
+          this.setIndex(index, MaterialType.MICROBOT, 72 + ((Math.random() * 44) | 0));
+        }
+      }
+      this.effects.emit("nano", cx + 0.5, cy + 0.5, Math.max(2, Math.floor(r / 2)));
+    }
+
+    spawnResourcePatch(cx, cy, radius) {
+      const r = Math.max(1, radius | 0);
+      const rr = r * r;
+      const options = [MaterialType.SCRAP, MaterialType.EARTH, MaterialType.SAND, MaterialType.PLANT, MaterialType.OIL];
+      for (let y = cy - r; y <= cy + r; y += 1) {
+        for (let x = cx - r; x <= cx + r; x += 1) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy > rr || Math.random() < 0.22) {
+            continue;
+          }
+          const type = options[(Math.random() * options.length) | 0];
+          if (this.getCell(x, y) === MaterialType.EMPTY || type === MaterialType.OIL) {
+            this.setCell(x, y, type);
+          }
+        }
+      }
+    }
+
+    heatArea(cx, cy, radius, strength) {
+      this.transformArea(cx, cy, radius, (index, type) => {
+        if (type === MaterialType.ICE) {
+          this.setIndex(index, MaterialType.WATER);
+        } else if (type === MaterialType.WATER && Math.random() < 0.22 * strength) {
+          this.setIndex(index, MaterialType.VAPOR, 130);
+        } else if ((type === MaterialType.PLANT || type === MaterialType.OIL) && Math.random() < 0.18 * strength) {
+          this.setIndex(index, MaterialType.FIRE, 180);
+        } else if (type === MaterialType.LAVA) {
+          this.setAuxIndex(index, Math.min(255, this.aux[index] + 18));
+        }
+      });
+      this.effects.emit("spark", cx + 0.5, cy + 0.5, Math.max(1, Math.floor(radius * strength)));
+    }
+
+    coolArea(cx, cy, radius, strength) {
+      this.transformArea(cx, cy, radius, (index, type) => {
+        if (type === MaterialType.WATER && Math.random() < 0.26 * strength) {
+          this.setIndex(index, MaterialType.ICE, 30);
+        } else if (type === MaterialType.FIRE) {
+          this.setIndex(index, MaterialType.VAPOR, 80);
+        } else if (type === MaterialType.LAVA && Math.random() < 0.24 * strength) {
+          this.setIndex(index, MaterialType.STONE);
+        } else if (type === MaterialType.MICROBOT) {
+          this.setAuxIndex(index, Math.max(2, this.aux[index] - 24));
+        }
+      });
+      this.effects.emit("melt", cx + 0.5, cy + 0.5, Math.max(1, Math.floor(radius * 0.6)));
+    }
+
+    drainArea(cx, cy, radius) {
+      this.transformArea(cx, cy, radius, (index, type) => {
+        const mat = Materials[type];
+        if (mat && (mat.liquid || mat.gas || type === MaterialType.FIRE)) {
+          this.setIndex(index, MaterialType.EMPTY);
+        }
+      });
+    }
+
+    stirArea(cx, cy, radius, strength) {
+      const r = Math.max(1, radius | 0);
+      const attempts = Math.max(8, Math.floor(r * r * strength));
+      for (let i = 0; i < attempts; i += 1) {
+        const x = Math.max(0, Math.min(this.cols - 1, cx + ((Math.random() * r * 2) | 0) - r));
+        const y = Math.max(0, Math.min(this.rows - 1, cy + ((Math.random() * r * 2) | 0) - r));
+        const nx = Math.max(0, Math.min(this.cols - 1, x + ((Math.random() * 5) | 0) - 2));
+        const ny = Math.max(0, Math.min(this.rows - 1, y + ((Math.random() * 5) | 0) - 2));
+        const type = this.getCell(x, y);
+        if (type !== MaterialType.EMPTY && type !== MaterialType.STONE) {
+          this.nudgeCell(x, y, nx, ny);
+        }
+      }
+    }
+
+    forceArea(cx, cy, radius, dx, dy, strength) {
+      const r = Math.max(1, radius | 0);
+      const attempts = Math.max(8, Math.floor(r * r * strength));
+      const sx = dx === 0 ? 0 : dx > 0 ? 1 : -1;
+      const sy = dy === 0 ? 0 : dy > 0 ? 1 : -1;
+      for (let i = 0; i < attempts; i += 1) {
+        const x = Math.max(0, Math.min(this.cols - 1, cx + ((Math.random() * r * 2) | 0) - r));
+        const y = Math.max(0, Math.min(this.rows - 1, cy + ((Math.random() * r * 2) | 0) - r));
+        const step = 1 + ((Math.random() * 3) | 0);
+        this.nudgeCell(x, y, x + sx * step, y + sy * step);
+      }
+    }
+
+    radialForceArea(cx, cy, radius, outward, strength) {
+      const r = Math.max(1, radius | 0);
+      const attempts = Math.max(10, Math.floor(r * r * strength));
+      for (let i = 0; i < attempts; i += 1) {
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 1 + Math.random() * r;
+        const x = Math.round(cx + Math.cos(angle) * dist);
+        const y = Math.round(cy + Math.sin(angle) * dist);
+        const dx = x === cx ? 0 : x > cx ? 1 : -1;
+        const dy = y === cy ? 0 : y > cy ? 1 : -1;
+        this.nudgeCell(x, y, x + (outward ? dx : -dx), y + (outward ? dy : -dy));
+      }
+    }
+
+    nudgeCell(x, y, nx, ny) {
+      if (!this.inBounds(x, y) || !this.inBounds(nx, ny)) {
+        return false;
+      }
+      const from = this.index(x, y);
+      const to = this.index(nx, ny);
+      const type = this.grid[from];
+      const target = this.grid[to];
+      if (type === MaterialType.EMPTY || type === MaterialType.STONE) {
+        return false;
+      }
+      if (target === MaterialType.EMPTY || this.canDisplace(type, target) || (type === MaterialType.MICROBOT && target !== MaterialType.STONE)) {
+        this.swapIndexes(from, to);
+        return true;
+      }
+      return false;
+    }
+
+    transformArea(cx, cy, radius, callback) {
+      const r = Math.max(1, radius | 0);
+      const rr = r * r;
+      for (let y = cy - r; y <= cy + r; y += 1) {
+        for (let x = cx - r; x <= cx + r; x += 1) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy > rr || !this.inBounds(x, y)) {
+            continue;
+          }
+          const index = this.index(x, y);
+          const type = this.grid[index];
+          if (type !== MaterialType.EMPTY) {
+            callback(index, type, x, y);
+          }
+        }
+      }
+    }
+
+    dropMeteor(cx, cy, radius) {
+      const r = Math.max(3, radius | 0);
+      const rr = r * r;
+      for (let y = cy - r; y <= cy + r; y += 1) {
+        for (let x = cx - r; x <= cx + r; x += 1) {
+          const dx = x - cx;
+          const dy = y - cy;
+          const d2 = dx * dx + dy * dy;
+          if (!this.inBounds(x, y) || d2 > rr) {
+            continue;
+          }
+          if (d2 < rr * 0.34) {
+            if (Math.random() < 0.38) {
+              this.setCell(x, y, MaterialType.LAVA, 210);
+            } else {
+              this.setCell(x, y, MaterialType.EMPTY);
+            }
+          } else if (d2 > rr * 0.72) {
+            this.setCell(x, y, Math.random() < 0.62 ? MaterialType.STONE : MaterialType.ASH);
+          } else if (Math.random() < 0.36) {
+            this.setCell(x, y, MaterialType.FIRE, 180);
+          }
+        }
+      }
+      this.effects.emit("spark", cx + 0.5, cy + 0.5, Math.max(5, r));
+      this.activateCell(cx, cy, r + 2);
     }
 
     drawLine(x0, y0, x1, y1, radius, type) {
@@ -858,6 +1225,16 @@
       }
     }
 
+    countMaterial(type) {
+      let count = 0;
+      for (let i = 0; i < this.grid.length; i += 1) {
+        if (this.grid[i] === type) {
+          count += 1;
+        }
+      }
+      return count;
+    }
+
     seedMixture() {
       const baseY = Math.floor(this.rows * 0.72);
       const width = Math.floor(this.cols * 0.55);
@@ -897,7 +1274,7 @@
 
     trimParticles() {
       let excess = this.particleCount - this.particleLimit;
-      const removable = [MaterialType.VAPOR, MaterialType.FIRE, MaterialType.ASH, MaterialType.OIL, MaterialType.WATER];
+      const removable = [MaterialType.VAPOR, MaterialType.FIRE, MaterialType.ASH, MaterialType.OIL, MaterialType.WATER, MaterialType.MICROBOT];
       for (let r = 0; r < removable.length && excess > 0; r += 1) {
         const type = removable[r];
         for (let i = 0; i < this.grid.length && excess > 0; i += 2) {
@@ -930,7 +1307,13 @@
         } else if (type === MaterialType.WATER) {
           b = Math.min(255, b + noise);
           g = Math.min(255, g + noise * 0.5);
-        } else if (type === MaterialType.SAND || type === MaterialType.EARTH || type === MaterialType.ASH || type === MaterialType.STONE) {
+        } else if (type === MaterialType.MICROBOT) {
+          const charge = this.aux[i] || 48;
+          const pulse = ((tick + i * 5) & 31) - 15;
+          r = Math.max(0, Math.min(255, r + charge * 0.12 + pulse));
+          g = Math.max(0, Math.min(255, g + charge * 0.18));
+          b = Math.max(0, Math.min(255, b + 28 + pulse * 0.5));
+        } else if (type === MaterialType.SAND || type === MaterialType.EARTH || type === MaterialType.ASH || type === MaterialType.STONE || type === MaterialType.SCRAP) {
           r = Math.max(0, Math.min(255, r + noise));
           g = Math.max(0, Math.min(255, g + noise));
           b = Math.max(0, Math.min(255, b + noise));

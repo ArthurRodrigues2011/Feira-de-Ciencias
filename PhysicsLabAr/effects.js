@@ -14,7 +14,8 @@
         smoke: "rgba(86, 92, 96, 0.42)",
         spark: "rgba(246, 142, 48, 0.82)",
         ripple: "rgba(74, 158, 216, 0.34)",
-        melt: "rgba(130, 205, 232, 0.45)"
+        melt: "rgba(130, 205, 232, 0.45)",
+        nano: "rgba(45, 183, 163, 0.7)"
       };
     }
 
@@ -47,10 +48,10 @@
         p.x = x + (Math.random() - 0.5) * 0.7;
         p.y = y + (Math.random() - 0.5) * 0.7;
         p.life = 0;
-        p.maxLife = kind === "ripple" ? 0.55 : kind === "spark" ? 0.42 : 1.05;
-        p.size = kind === "spark" ? 0.7 + Math.random() * 0.8 : kind === "ripple" ? 1.4 : 1 + Math.random() * 1.8;
-        p.vx = (Math.random() - 0.5) * (kind === "spark" ? 1.8 : 0.34);
-        p.vy = kind === "spark" ? -0.8 - Math.random() * 0.6 : kind === "ripple" ? 0 : -0.18 - Math.random() * 0.4;
+        p.maxLife = kind === "ripple" ? 0.55 : kind === "spark" ? 0.42 : kind === "nano" ? 0.72 : 1.05;
+        p.size = kind === "spark" ? 0.7 + Math.random() * 0.8 : kind === "ripple" ? 1.4 : kind === "nano" ? 0.55 + Math.random() * 0.7 : 1 + Math.random() * 1.8;
+        p.vx = (Math.random() - 0.5) * (kind === "spark" ? 1.8 : kind === "nano" ? 1.2 : 0.34);
+        p.vy = kind === "spark" ? -0.8 - Math.random() * 0.6 : kind === "ripple" ? 0 : kind === "nano" ? (Math.random() - 0.5) * 0.8 : -0.18 - Math.random() * 0.4;
         this.active.push(p);
       }
     }

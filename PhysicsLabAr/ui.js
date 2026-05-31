@@ -10,8 +10,27 @@
     { id: "erase", label: "Borracha", icon: "ER" },
     { id: "bucket", label: "Balde", icon: "BK" },
     { id: "line", label: "Linha", icon: "LN" },
-    { id: "rect", label: "Retangulo", icon: "RT" }
+    { id: "rect", label: "Retangulo", icon: "RT" },
+    { id: "spray", label: "Spray", icon: "SP" },
+    { id: "shower", label: "Chuva local", icon: "CH" },
+    { id: "swarm", label: "Enxame", icon: "MR" },
+    { id: "resources", label: "Recursos", icon: "RC" },
+    { id: "heat", label: "Aquecer", icon: "AQ" },
+    { id: "cool", label: "Resfriar", icon: "RF" },
+    { id: "spark", label: "Faisca", icon: "FX" },
+    { id: "drain", label: "Dreno", icon: "DR" },
+    { id: "stir", label: "Misturar", icon: "MS" },
+    { id: "fan", label: "Vento", icon: "VT" },
+    { id: "attract", label: "Atrair", icon: "AT" },
+    { id: "repel", label: "Repelir", icon: "RP" },
+    { id: "picker", label: "Conta-gotas", icon: "CG" },
+    { id: "wall", label: "Barreira", icon: "BA" },
+    { id: "meteor", label: "Meteoro", icon: "MT" }
   ];
+
+  const continuousTools = ["brush", "erase", "spray", "shower", "swarm", "resources", "heat", "cool", "spark", "drain", "stir", "fan", "attract", "repel", "wall"];
+  const finalTools = ["line", "rect"];
+  const initialOnlyTools = ["bucket", "picker", "meteor"];
 
   class UIController {
     constructor(world, time, weather, save) {
@@ -32,6 +51,7 @@
       this.chaos = false;
       this.fpsNode = document.getElementById("fpsValue");
       this.particleNode = document.getElementById("particleValue");
+      this.swarmNode = document.getElementById("swarmValue");
       this.cellNode = document.getElementById("cellValue");
       this.materialLabel = document.getElementById("selectedMaterialLabel");
       this.timeState = document.getElementById("timeState");
@@ -57,12 +77,19 @@
         button.title = mat.name;
         button.innerHTML = `<span class="swatch" style="background:${mat.color}"></span><span>${mat.name}</span>`;
         button.addEventListener("click", () => {
-          this.selectedMaterial = i;
-          this.materialLabel.textContent = mat.name;
-          this.setActiveButtons();
+          this.setSelectedMaterial(i);
         });
         palette.appendChild(button);
       }
+    }
+
+    setSelectedMaterial(type) {
+      if (!Materials[type] || type === T.EMPTY) {
+        return;
+      }
+      this.selectedMaterial = type;
+      this.materialLabel.textContent = Materials[type].name;
+      this.setActiveButtons();
     }
 
     buildTools() {
@@ -227,7 +254,7 @@
       event.preventDefault();
       const cell = this.eventToCell(event);
       this.previewCell = cell;
-      if (this.selectedTool === "brush" || this.selectedTool === "erase") {
+      if (this.isContinuousTool(this.selectedTool)) {
         this.applyTool(this.lastCell, cell, false);
       }
       this.lastCell = cell;
@@ -240,7 +267,11 @@
       event.preventDefault();
       const cell = this.eventToCell(event);
       this.previewCell = cell;
-      this.applyTool(this.startCell, cell, false, true);
+      if (this.isFinalTool(this.selectedTool)) {
+        this.applyTool(this.startCell, cell, false, true);
+      } else if (!this.isInitialOnlyTool(this.selectedTool) && !this.isContinuousTool(this.selectedTool)) {
+        this.applyTool(this.startCell, cell, false, true);
+      }
       this.dragging = false;
       this.startCell = null;
       this.lastCell = null;
@@ -259,7 +290,57 @@
         this.world.drawLine(from.x, from.y, to.x, to.y, this.brushSize, type);
       } else if (this.selectedTool === "rect" && final) {
         this.world.drawRect(from.x, from.y, to.x, to.y, this.brushSize, type);
+      } else if (this.selectedTool === "spray") {
+        this.world.sprayMaterial(to.x, to.y, this.brushSize, type);
+      } else if (this.selectedTool === "shower") {
+        this.world.showerMaterial(to.x, to.y, this.brushSize, type);
+      } else if (this.selectedTool === "swarm") {
+        this.world.spawnMicrobots(to.x, to.y, Math.max(2, this.brushSize));
+      } else if (this.selectedTool === "resources") {
+        this.world.spawnResourcePatch(to.x, to.y, Math.max(2, this.brushSize));
+      } else if (this.selectedTool === "heat") {
+        this.world.heatArea(to.x, to.y, Math.max(2, this.brushSize * 2), 1);
+      } else if (this.selectedTool === "cool") {
+        this.world.coolArea(to.x, to.y, Math.max(2, this.brushSize * 2), 1);
+      } else if (this.selectedTool === "spark") {
+        this.world.paintCircle(to.x, to.y, Math.max(1, Math.floor(this.brushSize * 0.55)), T.FIRE);
+        this.world.heatArea(to.x, to.y, Math.max(2, this.brushSize), 0.75);
+      } else if (this.selectedTool === "drain") {
+        this.world.drainArea(to.x, to.y, Math.max(2, this.brushSize * 2));
+      } else if (this.selectedTool === "stir") {
+        this.world.stirArea(to.x, to.y, Math.max(2, this.brushSize * 2), 2.2);
+      } else if (this.selectedTool === "fan") {
+        const dx = to.x - from.x;
+        const dy = to.y - from.y;
+        const fallback = ((this.world.tickId + to.y) & 1) ? 1 : -1;
+        this.world.forceArea(to.x, to.y, Math.max(2, this.brushSize * 3), dx || fallback, dy * 0.35, 1.9);
+      } else if (this.selectedTool === "attract") {
+        this.world.radialForceArea(to.x, to.y, Math.max(3, this.brushSize * 3), false, 1.7);
+      } else if (this.selectedTool === "repel") {
+        this.world.radialForceArea(to.x, to.y, Math.max(3, this.brushSize * 3), true, 1.9);
+      } else if (this.selectedTool === "picker" && initial) {
+        const picked = this.world.getCell(to.x, to.y);
+        if (picked !== T.EMPTY) {
+          this.setSelectedMaterial(picked);
+          this.toast(`${Materials[picked].name} selecionado`);
+        }
+      } else if (this.selectedTool === "wall") {
+        this.world.drawLine(from.x, from.y, to.x, to.y, Math.max(1, this.brushSize), T.STONE);
+      } else if (this.selectedTool === "meteor" && initial) {
+        this.world.dropMeteor(to.x, to.y, Math.max(4, this.brushSize * 2));
       }
+    }
+
+    isContinuousTool(tool) {
+      return continuousTools.indexOf(tool) !== -1;
+    }
+
+    isFinalTool(tool) {
+      return finalTools.indexOf(tool) !== -1;
+    }
+
+    isInitialOnlyTool(tool) {
+      return initialOnlyTools.indexOf(tool) !== -1;
     }
 
     eventToCell(event) {
@@ -339,6 +420,9 @@
     updateStats(fps) {
       this.fpsNode.textContent = String(Math.round(fps));
       this.particleNode.textContent = String(this.world.particleCount);
+      if (this.swarmNode) {
+        this.swarmNode.textContent = String(this.world.countMaterial(T.MICROBOT));
+      }
       this.cellNode.textContent = String(this.world.cellSize);
       this.setActiveButtons();
     }
@@ -347,13 +431,16 @@
       if (!this.chaos) {
         return;
       }
-      const types = [T.WATER, T.FIRE, T.EARTH, T.PLANT, T.VAPOR, T.LAVA, T.SAND, T.OIL, T.ICE, T.ASH];
+      const types = [T.WATER, T.FIRE, T.EARTH, T.PLANT, T.VAPOR, T.LAVA, T.SAND, T.OIL, T.ICE, T.ASH, T.SCRAP];
       const amount = this.world.performanceScale < 0.5 ? 2 : 5;
       for (let i = 0; i < amount; i += 1) {
         const type = types[(Math.random() * types.length) | 0];
         const x = (Math.random() * this.world.cols) | 0;
         const y = (Math.random() * Math.max(4, this.world.rows * 0.45)) | 0;
         this.world.paintCircle(x, y, 1 + ((Math.random() * this.brushSize) | 0), type);
+      }
+      if (Math.random() < 0.004 * this.world.performanceScale) {
+        this.world.spawnMicrobots((Math.random() * this.world.cols) | 0, (Math.random() * this.world.rows) | 0, 2);
       }
       if (Math.random() < 0.012) {
         const climates = ["rain", "storm", "snow", "tornado", "heat"];
