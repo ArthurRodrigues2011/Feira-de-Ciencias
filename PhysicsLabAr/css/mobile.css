@@ -1,0 +1,83 @@
+body {
+  overflow: auto;
+}
+
+.app-shell {
+  min-height: 100dvh;
+  height: auto;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.brand {
+  justify-content: center;
+}
+
+.brand span:not(.brand-mark) {
+  display: none;
+}
+
+.top-actions {
+  width: 100%;
+  overflow-x: auto;
+  justify-content: flex-start;
+  padding-bottom: 2px;
+}
+
+.icon-button {
+  flex: 0 0 38px;
+}
+
+.stats-strip {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.lab-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(360px, 58dvh) auto auto;
+  padding: 8px;
+}
+
+.world-panel {
+  order: 1;
+}
+
+.palette-panel {
+  order: 2;
+}
+
+.control-panel {
+  order: 3;
+  overflow: visible;
+}
+
+.material-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.material-button,
+.tool-button {
+  min-height: 40px;
+  padding: 7px;
+  font-size: 0.8rem;
+}
+
+.tool-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.range-row {
+  grid-template-columns: 66px minmax(0, 1fr) 52px;
+}
+
+.canvas-frame {
+  min-height: 360px;
+}

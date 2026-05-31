@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8fb">
+  <title>Physics Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/mobile.css" media="(max-width: 760px)">
+  <link rel="stylesheet" href="css/desktop.css" media="(min-width: 761px)">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark">PL</span>
+        <div>
+          <strong>Physics Lab</strong>
+          <span>Canvas 2D Sandbox</span>
+        </div>
+      </div>
+
+      <div class="top-actions" aria-label="Acoes principais">
+        <button class="icon-button" type="button" data-action="pause" title="Pausar ou continuar" aria-label="Pausar ou continuar">II</button>
+        <button class="icon-button" type="button" data-action="rewind" title="Retroceder tempo" aria-label="Retroceder tempo">RW</button>
+        <button class="icon-button" type="button" data-action="save" title="Salvar" aria-label="Salvar">SV</button>
+        <button class="icon-button" type="button" data-action="load" title="Carregar" aria-label="Carregar">LD</button>
+        <button class="icon-button" type="button" data-action="export" title="Exportar JSON" aria-label="Exportar JSON">EX</button>
+        <button class="icon-button" type="button" data-action="import" title="Importar JSON" aria-label="Importar JSON">IM</button>
+        <button class="icon-button" type="button" data-action="fullscreen" title="Tela cheia" aria-label="Tela cheia">FS</button>
+        <button class="text-button chaos-button" type="button" data-action="chaos">Caos</button>
+      </div>
+
+      <div class="stats-strip" aria-live="polite">
+        <span><b id="fpsValue">60</b> FPS</span>
+        <span><b id="particleValue">0</b> particulas</span>
+        <span><b id="cellValue">4</b> px</span>
+      </div>
+    </header>
+
+    <main class="lab-layout">
+      <aside class="panel palette-panel" aria-label="Materiais">
+        <div class="panel-title">
+          <h1>Materiais</h1>
+          <span id="selectedMaterialLabel">Agua</span>
+        </div>
+        <div id="materialPalette" class="material-grid"></div>
+      </aside>
+
+      <section class="world-panel" aria-label="Mundo fisico">
+        <div class="canvas-frame">
+          <canvas id="worldCanvas"></canvas>
+          <canvas id="overlayCanvas"></canvas>
+          <div id="statusToast" class="status-toast" role="status" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <aside class="panel control-panel" aria-label="Controles">
+        <section class="control-group">
+          <div class="panel-title">
+            <h2>Ferramentas</h2>
+          </div>
+          <div id="toolButtons" class="tool-grid"></div>
+        </section>
+
+        <section class="control-group">
+          <div class="panel-title compact-title">
+            <h2>Tempo</h2>
+            <span id="timeState">1x</span>
+          </div>
+          <div id="speedButtons" class="segmented"></div>
+        </section>
+
+        <section class="control-group">
+          <label class="field-label" for="weatherSelect">Clima</label>
+          <select id="weatherSelect">
+            <option value="clear">Limpo</option>
+            <option value="rain">Chuva</option>
+            <option value="storm">Tempestade</option>
+            <option value="snow">Neve</option>
+            <option value="tornado">Tornado</option>
+            <option value="heat">Onda de calor</option>
+          </select>
+        </section>
+
+        <section class="control-group advanced-panel">
+          <div class="panel-title">
+            <h2>Ajustes</h2>
+          </div>
+
+          <label class="range-row">
+            <span>Gravidade</span>
+            <input id="gravityRange" type="range" min="0" max="220" value="100">
+            <output id="gravityValue">1.00</output>
+          </label>
+
+          <label class="range-row">
+            <span>Pincel</span>
+            <input id="brushRange" type="range" min="1" max="18" value="5">
+            <output id="brushValue">5</output>
+          </label>
+
+          <label class="range-row">
+            <span>Clima</span>
+            <input id="weatherRange" type="range" min="0" max="100" value="35">
+            <output id="weatherValue">35%</output>
+          </label>
+
+          <label class="range-row">
+            <span>Limite</span>
+            <input id="limitRange" type="range" min="4000" max="70000" step="1000" value="32000">
+            <output id="limitValue">32000</output>
+          </label>
+        </section>
+
+        <section class="control-group utility-row">
+          <button class="text-button" type="button" data-action="clear">Limpar</button>
+          <button class="text-button" type="button" data-action="seed">Misturar</button>
+        </section>
+      </aside>
+    </main>
+  </div>
+
+  <input id="importInput" type="file" accept="application/json" hidden>
+
+  <script src="physics.js"></script>
+  <script src="reactions.js"></script>
+  <script src="effects.js"></script>
+  <script src="time.js"></script>
+  <script src="weather.js"></script>
+  <script src="save.js"></script>
+  <script src="ui.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
